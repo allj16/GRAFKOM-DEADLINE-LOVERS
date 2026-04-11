@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Peta Kota Web (Dengan Marka Jalan)</title>
+<style>
+    body { margin: 0; font-family: Arial; overflow: hidden; }
+    canvas { background: #eef2f7; display: block; }
+    .controls {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        background: white;
+        padding: 10px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        z-index: 10;
+    }
+    button { margin: 4px; }
+</style>
+</head>
+<body>
+
+<div class="controls">
+    <button onclick="randomMap()">Acak Map</button>
+    <button onclick="randomPoints()">Acak Posisi</button>
+    <button onclick="toggleMove()">Start / Pause</button>
+</div>
+
+<canvas id="mapCanvas"></canvas>
+
+<script>
+const canvas = document.getElementById("mapCanvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let GRID = 30;
+let cols = 50;
+let rows = 50;
+
+let grid = [];
+let start, goal, path = [];
+let moveIndex = 0;
+let moving = false;
+
+let offsetX = 0;
+let offsetY = 0;
+let scale = 1;
+let dragging = false;
+let lastMouse = {x:0,y:0};
+
+function generateMap() {
+    grid = [];
+
+    for (let y = 0; y < rows; y++) {
+        let row = [];
+        for (let x = 0; x < cols; x++) {
+            row.push(1);
+        }
+        grid.push(row);
+    }
+
+    // bangunan
+    for (let i = 0; i < 15; i++) {
+        let bx = Math.floor(Math.random() * (cols - 5));
+        let by = Math.floor(Math.random() * (rows - 5));
+        let w = Math.floor(Math.random() * 4) + 2;
+        let h = Math.floor(Math.random() * 4) + 2;
+
+        for (let y = by; y < by + h; y++) {
+            for (let x = bx; x < bx + w; x++) {
+                if (x < cols && y < rows) {
+                    grid[y][x] = 0;
+                }
+            }
+        }
+    }
+
+    ensureConnectivity();
+}
+
+function ensureConnectivity() {
+    for (let y=0;y<rows;y++) {
+        for (let x=0;x<cols;x++) {
+            if (grid[y][x] === 1) {
+                if (x>0) grid[y][x-1] = 1;
+                if (y>0) grid[y-1][x] = 1;
+            }
+        }
+    }
+}
+
+function randRoad() {
+    let x,y;
+    do {
+        x = Math.floor(Math.random()*cols);
+        y = Math.floor(Math.random()*rows);
+    } while(grid[y][x] === 0);
+    return [x,y];
+}
+
+function randomPoints() {
+    start = randRoad();
+    goal = randRoad();
+    path = findPath(start, goal);
+    moveIndex = 0;
+}
+
+function findPath(start, goal) {
+    let queue = [start];
+    let came = {};
+    came[start] = null;
+
+    while (queue.length) {
+        let [x,y] = queue.shift();
+        if (x === goal[0] && y === goal[1]) break;
+
+        let dirs = [[1,0],[-1,0],[0,1],[0,-1]];
+        for (let [dx,dy] of dirs) {
+            let nx = x+dx, ny = y+dy;
+            let key = nx+","+ny;
+            if (nx>=0 && ny>=0 && nx<cols && ny<rows) {
+                if (grid[ny][nx] === 1 && !(key in came)) {
+                    queue.push([nx,ny]);
+                    came[key] = [x,y];
+                }
+            }
+        }
+    }
+
+    let path = [];
+    let cur = goal;
+    while (cur) {
+        path.push(cur);
+        let key = cur[0]+","+cur[1];
+        cur = came[key];
+    }
+    return path.reverse();
+}
+
+function drawRoadMark(x, y) {
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]); // garis putus-putus
+
+    ctx.beginPath();
+    ctx.moveTo(x*GRID + GRID/2, y*GRID + 5);
+    ctx.lineTo(x*GRID + GRID/2, y*GRID + GRID - 5);
+    ctx.stroke();
+
+    ctx.setLineDash([]); // reset
+}
+
+function draw() {
+    ctx.setTransform(scale,0,0,scale,offsetX,offsetY);
+    ctx.clearRect(-offsetX/scale,-offsetY/scale,canvas.width/scale,canvas.height/scale);
+
+    for (let y=0;y<rows;y++) {
+        for (let x=0;x<cols;x++) {
+
+            if (grid[y][x] === 1) {
+                ctx.fillStyle = "#f9f9f9"; // jalan terang
+                ctx.fillRect(x*GRID,y*GRID,GRID,GRID);
+
+                // gambar marka jalan
+                drawRoadMark(x,y);
+
+            } else {
+                ctx.fillStyle = "#34495e"; // bangunan
+                ctx.fillRect(x*GRID,y*GRID,GRID,GRID);
+            }
+
+            ctx.strokeStyle = "#d0d0d0";
+            ctx.strokeRect(x*GRID,y*GRID,GRID,GRID);
+        }
+    }
+
+    // path
+    ctx.fillStyle = "yellow";
+    path.forEach(([x,y])=>{
+        ctx.fillRect(x*GRID,y*GRID,GRID,GRID);
+    });
+
+    // start
+    ctx.fillStyle = "red";
+    ctx.fillRect(start[0]*GRID,start[1]*GRID,GRID,GRID);
+
+    // goal
+    ctx.fillStyle = "blue";
+    ctx.fillRect(goal[0]*GRID,goal[1]*GRID,GRID,GRID);
+
+    if (moving && moveIndex < path.length-1) moveIndex++;
+
+    if (path.length) {
+        let [x,y] = path[moveIndex];
+        ctx.fillStyle = "green";
+        ctx.beginPath();
+        ctx.arc(x*GRID+GRID/2,y*GRID+GRID/2,8,0,Math.PI*2);
+        ctx.fill();
+    }
+
+    requestAnimationFrame(draw);
+}
+
+function randomMap() {
+    generateMap();
+    randomPoints();
+}
+
+function toggleMove() {
+    moving = !moving;
+}
+
+// zoom
+canvas.addEventListener("wheel", (e)=>{
+    e.preventDefault();
+    let zoom = e.deltaY < 0 ? 1.1 : 0.9;
+    scale *= zoom;
+});
+
+// drag
+canvas.addEventListener("mousedown", (e)=>{
+    dragging = true;
+    lastMouse = {x:e.clientX, y:e.clientY};
+});
+
+canvas.addEventListener("mousemove", (e)=>{
+    if (dragging) {
+        offsetX += e.clientX - lastMouse.x;
+        offsetY += e.clientY - lastMouse.y;
+        lastMouse = {x:e.clientX, y:e.clientY};
+    }
+});
+
+canvas.addEventListener("mouseup", ()=> dragging=false);
+canvas.addEventListener("mouseleave", ()=> dragging=false);
+
+// init
+generateMap();
+randomPoints();
+draw();
+
+</script>
+
+</body>
+</html>
