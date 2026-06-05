@@ -450,7 +450,15 @@ function drawHouse(x,y,w,h,col,parent){
   el('rect',{x:x+w/2-2.2,y:y+h*.7,width:4.4,height:h*.28,fill:'rgba(0,0,0,.3)',rx:1},bg);
   if(w>14){el('rect',{x:x+3,y:y+3,width:w*.19,height:h*.22,fill:'rgba(188,218,252,.8)',rx:.5},bg);el('rect',{x:x+w-3-w*.19,y:y+3,width:w*.19,height:h*.22,fill:'rgba(188,218,252,.8)',rx:.5},bg);}
 }
-
+function drawBuilding(x,y,w,h,col,parent){
+  const bg=g({},parent);
+  el('rect',{x:x+2,y:y+3,width:w,height:h,fill:'rgba(0,0,0,.15)',rx:2},bg);
+  el('rect',{x,y,width:w,height:h,fill:col,stroke:'rgba(0,0,0,.2)','stroke-width':1,rx:2},bg);
+  el('rect',{x:x-1,y:y-3,width:w+2,height:5,fill:darken(col,18),stroke:'rgba(0,0,0,.18)','stroke-width':.8,rx:1},bg);
+  const cc=Math.max(1,Math.floor(w/10)),rr=Math.max(1,Math.floor(h/12));
+  const cw3=(w-6)/cc,ch3=(h-8)/rr;
+  for(let r2=0;r2<rr;r2++)for(let c2=0;c2<cc;c2++)el('rect',{x:x+3+c2*cw3+1,y:y+4+r2*ch3+1,width:Math.max(2,cw3-2),height:Math.max(2,ch3-2),fill:Math.random()>.38?'rgba(198,228,252,.82)':'rgba(58,78,98,.58)',rx:.5},bg);
+}
 const SKIP_BLD=new Set(['BRIDGE','KM16','KIJANG']);
 function drawBuildings(){
   while(bldG.firstChild)bldG.removeChild(bldG.firstChild);
