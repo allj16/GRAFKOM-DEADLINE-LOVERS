@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Dijkstra Pantai Trikora - Deadline Lovers</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+<div id="topbar">
+  <div id="appTitle">Bintan Navigator<span>Peta Interaktif Pulau Bintan</span></div>
+  <div id="topSpacer"></div>
+  <button class="topChip" id="chipTraffic">🚦 Lalu Lintas</button>
+  <button class="iconBtn" id="locBtn">📍</button>
+  <button class="iconBtn" id="muteBtn">🔊</button>
+</div>
+
+<div id="searchBar">
+  <div class="searchRow" id="pickStartRow">
+    <div class="srIcon" style="background:rgba(52,200,122,0.2);color:#34c87a;border:1px solid rgba(52,200,122,0.3)">A</div>
+    <div class="srText">
+      <div class="srLabel">Titik Awal</div>
+      <div class="srValue ph" id="pickStartVal">Ketuk marker atau pilih...</div>
+    </div>
+    <button class="srBtn" id="btnSwap">⇅</button>
+  </div>
+  <div class="searchRow" id="pickEndRow">
+    <div class="srIcon" style="background:rgba(224,48,32,0.2);color:#e03020;border:1px solid rgba(224,48,32,0.3)">B</div>
+    <div class="srText">
+      <div class="srLabel">Titik Tujuan</div>
+      <div class="srValue ph" id="pickEndVal">Ketuk marker atau pilih...</div>
+    </div>
+    <button class="srBtn" id="btnClear">✕</button>
+  </div>
+  <div id="routeInfo">
+    <div class="riItem">📏 <strong id="riDist">—</strong></div>
+    <div class="riItem">⏱ <strong id="riTime">—</strong></div>
+    <div class="riAlt">
+      <button id="btnFastest" class="sel">⚡ Cepat</button>
+      <button id="btnScenic">🌴 Scenic</button>
+    </div>
+  </div>
+</div>
+
+<div id="sidebar">
+  <div id="sidebarInner">
+    <div id="sidebarHeader">
+      <h3>📍 Pilih Lokasi</h3>
+      <button id="closeSidebar">✕</button>
+    </div>
+    <div class="sbSect">Semua Lokasi Bintan</div>
+    <div id="poiList"></div>
+  </div>
+</div>
+
+<div id="bottomPanel">
+  <div id="bottomInner">
+    <div id="bpHandle"></div>
+    <div id="bpTitle">—</div>
+    <div id="bpSub">—</div>
+    <div class="bpStatsRow">
+      <div class="bpStat"><div class="sv" id="bpDist">—</div><div class="sk">Jarak</div></div>
+      <div class="bpStat"><div class="sv" id="bpTime">—</div><div class="sk">Waktu</div></div>
+      <div class="bpStat"><div class="sv" id="bpSpeed">45</div><div class="sk">km/j</div></div>
+    </div>
+    <div class="spdCtrl">
+      <label>⚡ Kec.</label>
+      <input type="range" id="spdRange" min="1" max="60" value="10">
+      <span id="spdVal">10×</span>
+    </div>
+    <div class="bpBtns">
+      <button class="bpBtn go" id="btnGo">▶ Mulai</button>
+      <button class="bpBtn stop" id="btnStop" style="display:none">⏸ Pause</button>
+      <button class="bpBtn cls" id="btnClose">✕ Tutup</button>
+    </div>
+    <div class="bpProgress" id="bpProg"><div class="bpProgressBar" id="bpProgBar"></div></div>
+  </div>
+</div>
+
+<div id="fab">
+  <button class="fabBtn" id="btnZin">+</button>
+  <button class="fabBtn" id="btnZout">−</button>
+  <button class="fabBtn" id="btnFit" style="font-size:14px">⊙</button>
+  <button class="fabBtn" id="btnMenu" style="font-size:14px">☰</button>
+  <button class="fabBtn" id="btnRandPos" title="Acak Rute" style="font-size:13px">🎯</button>
+  <button class="fabBtn" id="btnRandMap" title="Acak Layout Peta" style="font-size:13px">🗺️</button>
+</div>
+
+<div id="legend">
+  <h4>Legenda</h4>
+  <div class="lrow"><div class="lclr" style="background:#7fc8e8;border:1px solid #5aabcc"></div>Sungai</div>
+  <div class="lrow"><div class="lclr" style="background:#f5f0e6"></div>Jalan</div>
+  <div class="lrow"><div class="lclr" style="background:#fdd663"></div>Nasional</div>
+  <div class="lrow"><div class="lclr" style="background:#b0d870"></div>Hijau</div>
+  <div class="lrow"><div class="lclr" style="background:#cfc8ae;border:1px solid #b0a888"></div>Jembatan</div>
+</div>
+
+<div id="mapWrap"><svg id="mapSvg" xmlns="http://www.w3.org/2000/svg"></svg></div>
+<div id="toast"></div>
+
+<!-- ── DIJKSTRA TRACE PANEL ── -->
+<button id="btnDijTrace">📊 Trace Dijkstra</button>
+<div id="dijkstraPanel">
+  <div id="djInner">
+    <div id="djHead">
+      <h3>📊 Trace Algoritma Dijkstra</h3>
+      <button class="djClose" id="djClose">✕</button>
+    </div>
+    <div class="djBadge">⏱ Kompleksitas: O(V²) &nbsp;|&nbsp; V=node, E=edge</div>
+    <button id="btnDemoPPT">🎯 Demo 5 Node PPT (A→B→C→D→E)</button>
+    <div class="djSect">Langkah Iterasi</div>
+    <div id="djSteps"></div>
+    <div class="djSect">Tabel Jarak Iterasi</div>
+    <div id="djTableWrap"></div>
+    <div class="djSect">Jalur Optimal</div>
+    <div id="djResult"></div>
+  </div>
+</div>
+
+<div id="regenOverlay">
+  <div id="regenBox">
+    <div class="spinner"></div>
+    <p>Meregenerasi peta...</p>
+    <span>Jembatan & sungai tetap di posisi asli</span>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
