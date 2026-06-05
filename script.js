@@ -841,7 +841,69 @@ document.getElementById('btnFit').onclick=fitAll;
 
 function showToast(msg){if(!msg)return;const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._tid);t._tid=setTimeout(()=>t.classList.remove('show'),3200);}
 
+function randMap(){
+  // Reset rute aktif dulu
+  startNode=null;endNode=null;pickMode=null;routePts=[];fastestPath=null;scenicPath=null;
+  renderRoute();updateSearchBar();
+  document.getElementById('routeInfo').classList.remove('show');
+  document.getElementById('bottomPanel').classList.remove('show');
+  stopAnim();
 
+  // Tampilkan overlay loading
+  const overlay=document.getElementById('regenOverlay');
+  overlay.classList.add('show');
+
+  setTimeout(()=>{
+    // Geser posisi node dalam zone masing-masing (kecuali fixed)
+    for(const k in NODE_DEF){
+      const def=NODE_DEF[k];
+      if(def.fixed){
+        // Tetap di posisi asal
+        NODES[k]={...def};
+      } else if(def.zone){
+        const[xMin,xMax,yMin,yMax]=def.zone;
+        // Geser acak dalam zone, dengan margin dari tepi
+        NODES[k]={
+          ...def,
+          x: Math.round(rnd(xMin, xMax)),
+          y: Math.round(rnd(yMin, yMax)),
+        };
+      } else {
+        NODES[k]={...def};
+      }
+    }
+
+    // Pastikan node RA tidak terlalu dekat satu sama lain
+    const raKeys=['KM16','KIJANG'];
+    let attempts=0;
+    while(attempts<50){
+      const [ra1,ra2]=[NODES.KM16,NODES.KIJANG];
+      if(Math.hypot(ra1.x-ra2.x,ra1.y-ra2.y)>200)break;
+      // Reset salah satu
+      const def2=NODE_DEF.KM16;
+      if(def2.zone){const[x1,x2,y1,y2]=def2.zone;NODES.KM16.x=Math.round(rnd(x1,x2));NODES.KM16.y=Math.round(rnd(y1,y2));}
+      attempts++;
+    }
+
+    // Rebuild peta
+    renderMap();
+    buildPoiList();
+
+    // Jembatan tetap dari posisi FIXED NODE_DEF
+    buildBridges();
+
+    // Pastikan order SVG benar setelah regen
+    svg.appendChild(routeG);
+    svg.appendChild(lblG);
+    svg.appendChild(nodeG);
+    svg.appendChild(gpsG);
+    svg.appendChild(carG);
+
+    overlay.classList.remove('show');
+    fitAll();
+    showToast('🗺️ Layout peta diacak! Jembatan & sungai tetap di posisi asli.');
+  }, 80); // delay kecil agar overlay sempat render
+}
 // ═══════════════════════════════════════
 // 🎯 ACAK RUTE — pilih start & end acak
 // Tidak mengubah peta sama sekali
