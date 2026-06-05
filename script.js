@@ -442,6 +442,14 @@ function nearBeach(x,y){
 function nearRA(x,y){for(const k of['KM16','KIJANG'])if(Math.hypot(x-NODES[k].x,y-NODES[k].y)<RA_R+28)return true;return false;}
 function darken(hex,a){const n=parseInt(hex.replace('#',''),16);return`#${[16,8,0].map(s=>Math.max(0,((n>>s)&255)-a).toString(16).padStart(2,'0')).join('')}`;}
 const hC=['#e8dcc8','#ddd4c0','#e4d8c4','#d8cfc0','#e2d4bc'],bC=['#d4caba','#c8bfb0','#d0c8b8','#ccbfb0'];
+function drawHouse(x,y,w,h,col,parent){
+  const bg=g({},parent);
+  el('rect',{x:x+2,y:y+3,width:w,height:h,fill:'rgba(0,0,0,.15)',rx:2},bg);
+  el('rect',{x,y,width:w,height:h,fill:col,stroke:'rgba(0,0,0,.2)','stroke-width':.8,rx:1},bg);
+  el('polygon',{points:`${x-2},${y} ${x+w/2},${y-h*.38} ${x+w+2},${y}`,fill:darken(col,28),stroke:'rgba(0,0,0,.18)','stroke-width':.7},bg);
+  el('rect',{x:x+w/2-2.2,y:y+h*.7,width:4.4,height:h*.28,fill:'rgba(0,0,0,.3)',rx:1},bg);
+  if(w>14){el('rect',{x:x+3,y:y+3,width:w*.19,height:h*.22,fill:'rgba(188,218,252,.8)',rx:.5},bg);el('rect',{x:x+w-3-w*.19,y:y+3,width:w*.19,height:h*.22,fill:'rgba(188,218,252,.8)',rx:.5},bg);}
+}
 
 const SKIP_BLD=new Set(['BRIDGE','KM16','KIJANG']);
 function drawBuildings(){
