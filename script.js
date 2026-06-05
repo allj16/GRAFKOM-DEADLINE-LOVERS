@@ -478,6 +478,20 @@ function drawBuildings(){
   EMETA.forEach(m=>{if(m.len<180)return;const steps=Math.floor(m.len/90);for(let i=1;i<steps;i++){if(Math.random()>.35)continue;const t=i/steps,idx=Math.floor(t*(m.pts.length-1));const p1=m.pts[idx],p2=m.pts[Math.min(idx+1,m.pts.length-1)];const dx=p2[0]-p1[0],dy=p2[1]-p1[1],L=Math.hypot(dx,dy)||1;const nx=dy/L,ny=-dx/L;const side=Math.random()>.5?1:-1;const off=rnd(22,42);const bxr=p1[0]+nx*off*side,byr=p1[1]+ny*off*side;if(dToNode(bxr,byr)<30||dToRoads(bxr,byr)<11||inWater(bxr,byr)||nearBeach(bxr,byr)||nearRA(bxr,byr))continue;const hw=rnd(11,17),hh=rnd(9,14);drawHouse(bxr-hw/2,byr-hh/2,hw,hh,hC[Math.floor(rnd(0,hC.length))],bldG);}});
 }
 
+// LABELS
+function drawLabels(){
+  while(lblG.firstChild)lblG.removeChild(lblG.firstChild);
+  function lbl(x,y,txt,sz,col,fw='700'){el('text',{x,y,fill:col,'font-size':sz,'font-weight':fw,'text-anchor':'middle','font-family':'inherit',stroke:'rgba(255,255,255,.85)','stroke-width':3,'paint-order':'stroke'},lblG).textContent=txt;}
+  lbl(105,1102,'SELAT RIAU',19,'rgba(22,78,122,.45)','600');
+  lbl(2042,792,'LAUT CHINA SELATAN',16,'rgba(22,78,122,.45)','600');
+  const TP=NODES.TP,KIJ=NODES.KIJANG,KW=NODES.KAWALK,LAG=NODES.LAGOI;
+  lbl(TP.x,TP.y-68,'TANJUNGPINANG',15,'#202124');
+  lbl(KIJ.x,KIJ.y-70,'KIJANG',14,'#202124');
+  lbl(KW.x,KW.y+54,'KAWAL',13,'#202124');
+  lbl(LAG.x,LAG.y-60,'KAWASAN LAGOI',12,'#202124');
+  ['TK1','TK2','TK3','TK4'].forEach((k,i)=>{const n=NODES[k];lbl(n.x,n.y+70,'Trikora '+(i+1),10,'#186878');});
+  lbl(NODES.PELB.x,NODES.PELB.y-30,'Pelabuhan',11,'#3c4f8a');
+}
 
 // ── PINS ──
 const NC={city:'#1a73e8',junction:'#fbbc04',village:'#34a853',market:'#e91e63',beach:'#00acc1',port:'#3f51b5',resort:'#9c27b0',bridge:'#795548',roundabout:'#ff7043',landmark:'#43a047'};
