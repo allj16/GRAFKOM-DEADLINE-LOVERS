@@ -482,7 +482,7 @@ function drawLabels(){
   lbl(NODES.PELB.x,NODES.PELB.y-30,'Pelabuhan',11,'#3c4f8a');
 }
 
-// ── PINS ──
+// Function drawPins() - Kontribusi Nurul Syafika
 const NC={city:'#1a73e8',junction:'#fbbc04',village:'#34a853',market:'#e91e63',beach:'#00acc1',port:'#3f51b5',resort:'#9c27b0',bridge:'#795548',roundabout:'#ff7043',landmark:'#43a047'};
 function drawPins(){
   while(nodeG.firstChild)nodeG.removeChild(nodeG.firstChild);
