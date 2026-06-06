@@ -313,7 +313,7 @@ function drawRoads(){
   });
 }
 
-
+//menggambar bundaran
 function drawRA(key){
   if(raGroups[key]){try{svg.removeChild(raGroups[key]);}catch(e){}}
   const n=NODES[key],rg=g();
