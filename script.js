@@ -754,6 +754,7 @@ document.getElementById('btnClose').onclick=()=>{
   document.getElementById('routeInfo').classList.remove('show');document.getElementById('bottomPanel').classList.remove('show');
   document.getElementById('bpProg').classList.remove('show');stopAnim();
 };
+//fungsi animasi kendaraan
 function animStep(){
   if(!animRun)return;
   const spd=+spdRange.value;segProg+=spd*.045;
