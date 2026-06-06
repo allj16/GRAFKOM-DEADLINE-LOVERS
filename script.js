@@ -174,9 +174,9 @@ function buildGraph(){
   });
 }
 
+//function EdgeD()
 function edgeD(m){
-  const A=NODES[m.a],B=NODES[m.b];
-  const p0=bezPt(A.x,A.y,B.x,B.y,m.cx,m.cy,m.t0),p1=bezPt(A.x,A.y,B.x,B.y,m.cx,m.cy,m.t1);
+  const A=NODES[m.a],B=NODES[m.b];const p0=bezPt(A.x,A.y,B.x,B.y,m.cx,m.cy,m.t0),p1=bezPt(A.x,A.y,B.x,B.y,m.cx,m.cy,m.t1);
   return`M${p0.x.toFixed(1)},${p0.y.toFixed(1)} Q${m.cx.toFixed(1)},${m.cy.toFixed(1)} ${p1.x.toFixed(1)},${p1.y.toFixed(1)}`;
 }
 
