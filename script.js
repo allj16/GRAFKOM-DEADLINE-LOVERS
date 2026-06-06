@@ -549,6 +549,7 @@ function dijkstra(s,e,scenicW=1){
     for(const nb of(ADJ[u]||[])){const cost=nb.len*(nb.meta.scenic?scenicW:1);const alt=dist[u]+cost;if(alt<dist[nb.to]){dist[nb.to]=alt;prev[nb.to]=u;}}}
   if(dist[e]===Infinity)return null;const path=[];let c=e;while(c){path.unshift(c);c=prev[c];}return path;
 }
+//membuat fungsi hitung titik-titk lintasan melingkar di bundaran
 function snapToRing(raKey,px,py){
   const N=NODES[raKey],ang=Math.atan2(py-N.y,px-N.x);
   return[N.x+Math.cos(ang)*RA_BYPASS_R,N.y+Math.sin(ang)*RA_BYPASS_R];
