@@ -184,7 +184,7 @@ const NAT=new Set(['TP|BATU10','BATU10|SIMP1','SIMP1|KM16','KM16|KM18','KM18|KIJ
   'KIJANG|KAWALU','KAWALU|BRIDGE','BRIDGE|KAWAL','KAWAL|TKJUNC','TKJUNC|TK1',
   'TK1|TK2','TK2|TK3','TK3|TK4','KAWAL|KAWALK']);
 
-
+function isNat(m){const k1=m.a+'|'+m.b,k2=m.b+'|'+m.a;return NAT.has(k1)||NAT.has(k2);}
 // ═══════════════════════════════════════
 // SVG LAYER GROUPS (persistent containers)
 // ═══════════════════════════════════════
