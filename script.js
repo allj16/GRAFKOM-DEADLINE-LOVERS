@@ -121,17 +121,12 @@ function buildPts(ax,ay,bx,by,cx,cy,t0=0,t1=1,steps=48){
   return pts;
 }
 function curveLen(pts){let L=0;for(let i=1;i<pts.length;i++)L+=Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]);return L;}
-
-// Hitung ctrl point otomatis (mid-point dengan slight curve)
-function autoCurve(ax,ay,bx,by,jitter=0.12){
-  const mx=(ax+bx)/2,my=(ay+by)/2;
-  const dx=bx-ax,dy=by-ay;
-  const nx=-dy,ny=dx; // normal
-  const L=Math.hypot(nx,ny)||1;
+function auto_curve(ax,ay,bx,by,jitter=0.12){
+  const mx=(ax+bx)/2,my=(ay+by)/2;const dx=bx-ax,dy=by-ay;
+  const nx=-dy,ny=dx;const L=Math.hypot(nx,ny)||1;
   const j=(Math.random()-0.5)*2*jitter;
   return{cx:mx+nx/L*Math.hypot(dx,dy)*j,cy:my+ny/L*Math.hypot(dx,dy)*j};
 }
-
 let ADJ={},EMETA=[];
 
 function buildGraph(){
