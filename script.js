@@ -301,6 +301,20 @@ function drawRiver(){
   // 3. TEKS NAMA SUNGAI (Disesuaikan posisinya di dekat jembatan baru)
   el('text',{x:BRDG.x-110,y:1520,fill:'#1e5f7a','font-size':11,'font-weight':700,'font-style':'italic','text-anchor':'middle','font-family':'inherit'},riverG).textContent='Sungai Kawal';
 
+function drawRoads(){
+  while(shadG.firstChild)shadG.removeChild(shadG.firstChild);
+  while(baseG.firstChild)baseG.removeChild(baseG.firstChild);
+  while(topG.firstChild)topG.removeChild(topG.firstChild);
+  while(ctrG.firstChild)ctrG.removeChild(ctrG.firstChild);
+  EMETA.forEach(m=>{
+    const d=edgeD(m),nat=isNat(m),w=nat?20:14;
+    el('path',{d,stroke:'rgba(0,0,0,.13)','stroke-width':w+7,fill:'none','stroke-linecap':'round',transform:'translate(1,3)'},shadG);
+    el('path',{d,stroke:'#beb090','stroke-width':w+4,fill:'none','stroke-linecap':'round'},baseG);
+    el('path',{d,stroke:'#f5f0e6','stroke-width':w,fill:'none','stroke-linecap':'round'},topG);
+    el('path',{d,stroke:nat?'#f5c030':'rgba(175,162,115,.45)','stroke-width':nat?2.2:1.2,fill:'none','stroke-dasharray':nat?'0':'10 8'},ctrG);
+  });
+}
+
 
 function drawRA(key){
   if(raGroups[key]){try{svg.removeChild(raGroups[key]);}catch(e){}}
