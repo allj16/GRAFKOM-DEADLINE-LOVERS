@@ -259,7 +259,7 @@ function drawBeaches(){
   });
 }
 
-// Sungai: FIXED di RY — tidak berubah
+// Function drawRiver dan drawRiverSeg() - Kontribusi Nurul Syafika
 function drawRiver(){
   while(riverG.firstChild) riverG.removeChild(riverG.firstChild);
   
