@@ -101,10 +101,6 @@ const EDGES_DEF_ORIG=[
   ['TK2','TK3'],['TK3','TK4'],
   ['TK4','BERAK'],['KAWALK','KIJPSR'],
 ];
-
-// ═══════════════════════════════════════
-// BEZIER + GRAPH HELPERS
-// ═══════════════════════════════════════
 function bezPt(ax,ay,bx,by,cx,cy,t){
   if(cx===undefined)return{x:ax+(bx-ax)*t,y:ay+(by-ay)*t};
   return{x:(1-t)*(1-t)*ax+2*(1-t)*t*cx+t*t*bx,y:(1-t)*(1-t)*ay+2*(1-t)*t*cy+t*t*by};
