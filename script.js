@@ -227,10 +227,7 @@ el('rect',{x:13,y:1,width:3.5,height:3,fill:'#fffc99',rx:.5},carG);
 el('rect',{x:-17,y:1,width:3,height:3,fill:'#ff3322',rx:.5},carG);
 svg.appendChild(carG);
 
-// ═══════════════════════════════════════
-// DRAW FUNCTIONS
-// ═══════════════════════════════════════
-
+// Function drawGreen - Kontribusi Nurul Syafika
 function drawGreen(){
   while(grnG.firstChild)grnG.removeChild(grnG.firstChild);
   // Area hijau mengikuti posisi node terdekat
