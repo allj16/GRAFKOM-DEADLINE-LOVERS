@@ -246,6 +246,7 @@ function drawGreen(){
   });
 }
 
+// Function drawBeaches() - Kontribusi Nurul Syafika
 function drawBeaches(){
   while(beachContainerG.firstChild)beachContainerG.removeChild(beachContainerG.firstChild);
   [{key:'TK1',rx:82,ry:52,rot:-18},{key:'TK2',rx:74,ry:48,rot:-10},
